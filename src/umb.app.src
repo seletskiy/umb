@@ -1,0 +1,7 @@
+%% vim: et ts=4 sw=4 ft=erlang
+{application, umb, [
+    {description, "UMB protocol implementation"},
+    {vsn, git},
+    {registered, []},
+    {applications, [kernel, stdlib]},
+    {mod, {umb_app, []}}]}.

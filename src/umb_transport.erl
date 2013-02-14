@@ -29,10 +29,10 @@ start_link(Id, TransportName, TransportArgs) ->
         [TransportName, TransportArgs], []).
 
 connect(Pid) ->
-    gen_server:call(Pid, connect).
+    gen_server:call(Pid, connect, infinity).
 
 disconnect(Pid) ->
-    gen_server:call(Pid, disconnect).
+    gen_server:call(Pid, disconnect, infinity).
 
 send(Pid, Data) ->
     gen_server:call(Pid, {send, Data}, infinity).
@@ -71,7 +71,7 @@ handle_call(disconnect, _From, State) ->
     end;
 handle_call({send, Data}, _From, State) ->
     Module = State#state.transport_module,
-    sl:debug("send ~p", [Data]),
+    sl:debug("send ~w", [Data]),
     case Module:send(Data, State#state.transport_state) of
         {ok, S} ->
             {reply, ok, State#state{transport_state = S}};

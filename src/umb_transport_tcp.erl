@@ -37,18 +37,24 @@ connect(State = #state{host = Host, port = Port, opts = Opts}) ->
         Error -> Error
     end.
 
+disconnect(_State = #state{sock = nil}) ->
+    {error, closed};
 disconnect(State = #state{sock = Sock}) ->
     case gen_tcp:close(Sock) of
         ok -> {ok, State#state{sock = nil}};
         Error -> Error
     end.
 
+send(_Data, _State = #state{sock = nil}) ->
+    {error, closed};
 send(Data, State = #state{sock = Sock}) ->
     case gen_tcp:send(Sock, Data) of
         ok -> {ok, State};
         Error -> Error
     end.
 
+recv(_, _State = #state{sock = nil}) ->
+    {error, closed};
 recv(all, State) ->
     recv(0, State);
 recv(Length, State = #state{sock = Sock, opts = Opts}) when is_integer(Length) ->

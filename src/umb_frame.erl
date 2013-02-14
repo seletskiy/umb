@@ -15,6 +15,8 @@
     encode/1,
     code_int/1,
     code_long/1,
+    code_float/1,
+    code_double/1,
     decode/1
 ]).
 
@@ -126,4 +128,12 @@ code_int(Int) ->
 
 code_long(Long) ->
     <<Result:32>> = <<Long:32/little>>,
+    Result.
+
+code_float(Float) ->
+    <<Result:32/float-little>> = <<Float:32>>,
+    Result.
+
+code_double(Double) ->
+    <<Result:64/float-little>> = <<Double:64>>,
     Result.

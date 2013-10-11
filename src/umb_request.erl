@@ -129,8 +129,10 @@ decode_payload_cnl_full(<<Cnl:16, Var:160/bitstring, Unit:120/bitstring, Mv:8,
     case [decode_data_value(Type, BinMin), decode_data_value(Type, BinMax)] of
         [{ok, Min}, {ok, Max}] -> {ok, [
                 {channel, umb_frame:code_int(Cnl)},
-                {variable, string:strip(binary_to_list(Var))},
-                {unit, string:strip(binary_to_list(Unit))},
+                {variable, unicode:characters_to_binary(
+                    string:strip(binary_to_list(Var)))},
+                {unit, unicode:characters_to_binary(
+                    string:strip(binary_to_list(Unit)))},
                 {mv_type, Mv},
                 {data_type, decode_data_type(Type)},
                 {min, Min},

@@ -65,8 +65,9 @@ start_link(Id, ConnPid) ->
 
 
 %% @hidden
-init([ConnId]) ->
-    {ok, #state{connect = ConnId}}.
+init([ConnPid]) ->
+    link(ConnPid),
+    {ok, #state{connect = ConnPid}}.
 
 %% @hidden
 handle_call({request, {From, To, Frame}}, _From, State) ->

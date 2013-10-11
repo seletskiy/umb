@@ -67,6 +67,7 @@ handle_call(connect, _From, State) ->
             sl:error("connection failed: ~p", [Error]),
             {reply, Error, State}
     end;
+
 handle_call(disconnect, _From, State) ->
     Module = State#state.transport_module,
     sl:debug("disconnecting"),
@@ -110,6 +111,7 @@ handle_call({send, Data}, _From, State) ->
             sl:error("send failed: ~p", [Error]),
             {reply, Error, State}
     end;
+
 handle_call({recv, Length}, _From, State) ->
     Module = State#state.transport_module,
     sl:debug("recv ~p", [Length]),
@@ -121,6 +123,7 @@ handle_call({recv, Length}, _From, State) ->
             sl:error("recv failed: ~p", [Error]),
             {reply, Error, State}
     end;
+
 handle_call(_Message, _From, State) ->
     {noreply, State}.
 

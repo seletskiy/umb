@@ -18,36 +18,24 @@ init(_Args) ->
 
 start_bus(Id, TransportName, TransportArgs) ->
     case start_transport(Id, TransportName, TransportArgs) of
-        Error = {error, _Reason} ->
-            Error;
         {ok, Connect} ->
-            Result = supervisor:start_child(?MODULE,
+            supervisor:start_child(?MODULE,
                 {umb_bus,
                     {umb_bus, start_link, [Id, Connect]},
-                    permanent,
-                    brutal_kill,
+                    temporary,
+                    5000,
                     worker,
-                    [umb_bus]}),
-            case Result of
-                {ok, _Pid} ->
-                    {ok, Id};
-                Error = {error, _Reason} ->
-                    Error
-            end
+                    [umb_bus]});
+        Other ->
+            Other
     end.
 
 start_transport(BusId, TransportName, TransportArgs) ->
     Id = list_to_atom(lists:flatten(io_lib:format("~s_transport", [BusId]))),
-    Result = supervisor:start_child(?MODULE,
+    supervisor:start_child(?MODULE,
         {umb_transport,
             {umb_transport, start_link, [Id, TransportName, TransportArgs]},
-            permanent,
-            brutal_kill,
+            temporary,
+            5000,
             worker,
-            [umb_transport, TransportName]}),
-    case Result of
-        {ok, _Pid} ->
-            {ok, Id};
-        Error = {error, _Reason} ->
-            Error
-    end.
+            [umb_transport, TransportName]}).

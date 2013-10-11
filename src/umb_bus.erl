@@ -73,10 +73,10 @@ init([ConnPid]) ->
 handle_call({request, {From, To, Frame}}, _From, State) ->
     Frame2 = umb_frame:set_to(Frame, To),
     Frame3 = umb_frame:set_from(Frame2, From),
-    ConnId = State#state.connect,
-    umb_transport:connect(ConnId),
-    umb_transport:send(ConnId, umb_frame:encode(Frame3)),
-    Source = fun(Amount) -> umb_transport:recv(ConnId, Amount) end,
+    ConnPid = State#state.connect,
+    umb_transport:start_transmission(ConnPid),
+    umb_transport:send(ConnPid, umb_frame:encode(Frame3)),
+    Source = fun(Amount) -> umb_transport:recv(ConnPid, Amount) end,
     Reply = case umb_frame:decode(Source) of
         {ok, ReplyFrame} ->
             sl:debug("frame decoded successfully"),
@@ -85,7 +85,7 @@ handle_call({request, {From, To, Frame}}, _From, State) ->
             sl:error("failed to decode packet: ~p", [Reason]),
             {error, Reason}
     end,
-    umb_transport:disconnect(ConnId),
+    umb_transport:end_transmission(ConnPid),
     {reply, Reply, State};
 handle_call(_Message, _From, State) ->
     {noreply, State}.

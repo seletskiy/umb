@@ -37,6 +37,12 @@ connect(State = #state{host = Host, port = Port, opts = Opts}) ->
         Error -> Error
     end.
 
+start_transmission(State) ->
+    {ok, State}.
+
+end_transmission(State) ->
+    {ok, State}.
+
 disconnect(_State = #state{sock = nil}) ->
     {error, closed};
 disconnect(State = #state{sock = Sock}) ->

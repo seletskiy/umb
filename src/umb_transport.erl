@@ -7,6 +7,8 @@
 -export([
     connect/1,
     disconnect/1,
+    start_transmission/1,
+    end_transmission/1,
     send/2,
     recv/1,
     recv/2
@@ -33,6 +35,12 @@ connect(Pid) ->
 
 disconnect(Pid) ->
     gen_server:call(Pid, disconnect, infinity).
+
+start_transmission(Pid) ->
+    gen_server:call(Pid, start_transmission, infinity).
+
+end_transmission(Pid) ->
+    gen_server:call(Pid, end_transmission, infinity).
 
 send(Pid, Data) ->
     gen_server:call(Pid, {send, Data}, infinity).
@@ -69,6 +77,29 @@ handle_call(disconnect, _From, State) ->
             sl:error("disconnect failed: ~p", [Error]),
             {reply, Error, State}
     end;
+
+handle_call(start_transmission, _From, State) ->
+    Module = State#state.transport_module,
+    sl:debug("starting transmission"),
+    case Module:start_transmission(State#state.transport_state) of
+        {ok, S} ->
+            {reply, ok, State#state{transport_state = S}};
+        Error ->
+            sl:error("starting transmission failed: ~p", [Error]),
+            {reply, Error, State}
+    end;
+
+handle_call(end_transmission, _From, State) ->
+    Module = State#state.transport_module,
+    sl:debug("ending transmission"),
+    case Module:end_transmission(State#state.transport_state) of
+        {ok, S} ->
+            {reply, ok, State#state{transport_state = S}};
+        Error ->
+            sl:error("ending transmission failed: ~p", [Error]),
+            {reply, Error, State}
+    end;
+
 handle_call({send, Data}, _From, State) ->
     Module = State#state.transport_module,
     sl:debug("send ~w", [Data]),

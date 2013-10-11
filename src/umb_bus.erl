@@ -59,9 +59,9 @@ request(Bus, From, To, Frame) ->
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% @hidden
--spec start_link(atom(), atom()) -> {ok, pid()} | {error, Reason :: term()}.
-start_link(Id, ConnId) ->
-    gen_server:start_link({local, Id}, ?MODULE, [ConnId], []).
+-spec start_link(atom(), pid()) -> {ok, pid()} | {error, Reason :: term()}.
+start_link(Id, ConnPid) ->
+    gen_server:start_link({local, Id}, ?MODULE, [ConnPid], []).
 
 
 %% @hidden

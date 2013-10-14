@@ -20,7 +20,7 @@ start_bus(Id, TransportName, TransportArgs) ->
     case start_transport(Id, TransportName, TransportArgs) of
         {ok, Connect} ->
             supervisor:start_child(?MODULE,
-                {umb_bus,
+                {Id,
                     {umb_bus, start_link, [Id, Connect]},
                     temporary,
                     5000,
@@ -33,7 +33,7 @@ start_bus(Id, TransportName, TransportArgs) ->
 start_transport(BusId, TransportName, TransportArgs) ->
     Id = list_to_atom(lists:flatten(io_lib:format("~s_transport", [BusId]))),
     supervisor:start_child(?MODULE,
-        {umb_transport,
+        {Id,
             {umb_transport, start_link, [Id, TransportName, TransportArgs]},
             temporary,
             5000,
